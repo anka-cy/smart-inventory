@@ -25,7 +25,7 @@ A Python/Django application for tracking inventory, customers, and orders.
    pip install -r requirements.txt
    ```
 
-### 3. Configuration
+### 3. Database Setup
 ⚠️ IMPORTANT – Run sample.sql
 
 Before running the app, you MUST initialize the database schema.
@@ -41,9 +41,14 @@ DB_CONFIG = {
 }
 ```
 
-### 4. Running the App
+Once your database is configured, initialize the tables by running Django migrations:
 ```bash
 cd web/django_project
+python manage.py migrate
+```
+
+### 4. Running the App
+```bash
 python manage.py runserver
 ```
 Navigate to `http://127.0.0.1:8000/`.
