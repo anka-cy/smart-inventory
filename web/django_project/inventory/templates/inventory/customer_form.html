@@ -1,0 +1,49 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<!-- Layout Wrapper: Centers the form and restricts its maximum width for better readability -->
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-structured mb-4">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-4">Register Customer</h3>
+                <!-- Form Submission: Uses POST method to securely send data to the backend -->
+                <form method="post">
+                    <!-- Security Token: Required to prevent cross-site request forgery when submitting data -->
+                    {% csrf_token %}
+
+                    <!-- Error Handling: Displays any validation errors returned by the Django form or our Core logic -->
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Manual Field Rendering: We define each input manually instead of using {{ form.as_p }} to perfectly apply Bootstrap CSS classes -->
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">Name:</label>
+                        <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}"
+                            class="form-control" placeholder="Full Name"
+                            value="{{ form.name.value|default_if_none:'' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email:</label>
+                        <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
+                            class="form-control" placeholder="Email Address"
+                            value="{{ form.email.value|default_if_none:'' }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <a href="{% url 'customer_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

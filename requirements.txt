@@ -1,0 +1,15 @@
+# Web Framework
+Django>=4.2.0
+
+# Database Connectivity
+mysql-connector-python>=8.0.33
+SQLAlchemy>=2.0.0
+
+# Data Analysis & Logic
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Data Visualization (for Jupyter Notebook)
+matplotlib>=3.7.0
+seaborn>=0.12.0
+ipykernel

@@ -1,0 +1,64 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<!-- Page Layout: Header with title and primary "Create Order" action button -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2>Orders</h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end align-items-center gap-2">
+        <!-- Search Form: Sends a GET request to the same view to filter the order list -->
+        <form method="GET" action="{% url 'order_list' %}" class="m-0">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search by ID or Name..."
+                    value="{{ query|default:'' }}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+                {% if query %}
+                <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Clear</a>
+                {% endif %}
+            </div>
+        </form>
+        <a href="{% url 'order_create' %}" class="btn btn-primary">Create Order</a>
+    </div>
+</div>
+
+</div>
+
+<!-- Data Table Wrapper: Uses custom card styling for a floating effect -->
+<div class="card card-structured mb-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped border-0 text-center align-middle mb-0">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th class="border-0">Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Django Template Loop: Iterates through the 'orders' list descending by date as defined in views.py -->
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <!-- Displaying related data: Accesses the nested customer object via order.customer.name -->
+                        <td>{{ order.customer.name }}</td>
+                        <!-- Date formatting: Uses Django's built in date filter to format the timestamp cleanly -->
+                        <td>{{ order.order_date|date:"M d, Y g:i A" }}</td>
+                        <td>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                    <!-- Empty State: Shown if no orders have been placed yet -->
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

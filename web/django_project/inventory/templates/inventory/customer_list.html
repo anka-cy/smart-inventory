@@ -1,0 +1,55 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<!-- Page Layout: Header with title and primary action button -->
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2>Customers</h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end align-items-center gap-2">
+        <!-- Search Form: Sends a GET request to the same view to filter the customer list -->
+        <form method="GET" action="{% url 'customer_list' %}" class="m-0">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ query|default:'' }}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+                {% if query %}
+                <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary">Clear</a>
+                {% endif %}
+            </div>
+        </form>
+        <a href="{% url 'customer_create' %}" class="btn btn-primary text-nowrap">Register Customer</a>
+    </div>
+</div>
+
+<!-- Data Table Wrapper: Uses custom card styling for a floating effect -->
+<div class="card card-structured mb-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped border-0 text-center align-middle mb-0">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th class="border-0">ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Django Template Loop: Iterates through the 'customers' list from the backend -->
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.id }}</td>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.email }}</td>
+                    </tr>
+                    <!-- Empty State: Shown if no customers exist in the database -->
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No customers found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

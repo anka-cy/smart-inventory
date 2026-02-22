@@ -1,0 +1,146 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<!-- Main Layout Wrapper: Uses a wide, centered column for the complex order form -->
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-structured mb-4">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-4">Create Order</h3>
+                <!-- Order Form Submission -->
+                <form method="post">
+                    <!-- Security Token: Required by Django for POST requests -->
+                    {% csrf_token %}
+
+                    <h4>Customer</h4>
+                    <div class="mb-3">
+                        {{ form.customer }}
+                        {% if form.customer.errors %}
+                        <div class="alert alert-danger mt-2 py-2">
+                            {% for error in form.customer.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+                    <h4>Items</h4>
+                    <!-- Formset Management: Essential hidden fields that tell Django how many items are in the order -->
+                    {{ formset.management_form }}
+
+                    {% if formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in formset.non_form_errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div id="items-container">
+                        {% for form in formset %}
+                        <div class="item-row border-bottom mb-2 pb-2">
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 mb-2">
+                                {% for error in form.non_field_errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="row align-items-end">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Product:</label>
+                                    {{ form.product }}
+                                    {% if form.product.errors %}
+                                    <div class="alert alert-danger mt-1 py-1">
+                                        {% for error in form.product.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Quantity:</label>
+                                    {{ form.quantity }}
+                                    {% if form.quantity.errors %}
+                                    <div class="alert alert-danger mt-1 py-1">
+                                        {% for error in form.quantity.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% if form.instance.pk %}
+                                <div class="col-md-1 mb-2">
+                                    <label class="form-label">Delete:</label>
+                                    {{ form.DELETE }}
+                                </div>
+                                {% endif %}
+                                <div class="col-md-auto mb-2">
+                                    <button type="button" class="btn btn-outline-danger remove-item" title="Remove row">
+                                        <i class="fas fa-trash-alt remove-item"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Dynamic UI Control: Handled by custom JavaScript below to clone the form structure -->
+                    <button type="button" id="add-item" class="btn btn-sm btn-info mb-3">Add Item</button>
+                    <br>
+
+                    <button type="submit" class="btn btn-success">Create Order</button>
+                    <a href="{% url 'order_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dynamic Form Validation Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Formset Cloning Logic: Allows users to add multiple products to a single order seamlessly
+        const addItemBtn = document.getElementById('add-item');
+        const container = document.getElementById('items-container');
+        const totalForms = document.getElementById('id_orderitem_set-TOTAL_FORMS');
+
+        addItemBtn.addEventListener('click', function () {
+            const formCount = parseInt(totalForms.value);
+            const firstRow = container.querySelector('.item-row');
+            const newRow = firstRow.cloneNode(true);
+
+            const regex = new RegExp(`orderitem_set-\\d+-`, 'g');
+            const newIndexStr = `orderitem_set-${formCount}-`;
+            newRow.innerHTML = newRow.innerHTML.replace(regex, newIndexStr);
+
+            const inputs = newRow.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (input.type !== 'hidden') input.value = '';
+            });
+
+            newRow.querySelectorAll('.alert-danger').forEach(el => el.remove());
+            newRow.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+            container.appendChild(newRow);
+            totalForms.value = formCount + 1;
+        });
+
+        container.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-item')) {
+                const rows = container.querySelectorAll('.item-row');
+                if (rows.length > 1) {
+                    e.target.closest('.item-row').remove();
+                    totalForms.value = container.querySelectorAll('.item-row').length;
+                } else {
+                    alert("Order must have at least one item!");
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
