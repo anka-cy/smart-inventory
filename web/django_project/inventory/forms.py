@@ -11,11 +11,28 @@ class ProductForm(forms.ModelForm):
     # Define category choices (you can expand this list as needed)
     CATEGORIES = [
         ('', '-- Select Category --'),
-        ('Electronics', 'Electronics'),
-        ('Furniture', 'Furniture'),
-        ('Office Supplies', 'Office Supplies'),
-        ('Accessories', 'Accessories'),
-        ('Others', 'Others'),
+
+        ('electronics', 'Electronics'),
+        ('computers', 'Computers & Laptops'),
+        ('mobile_devices', 'Mobile Phones & Tablets'),
+        ('networking', 'Networking Equipment'),
+
+        ('office_furniture', 'Office Furniture'),
+        ('home_furniture', 'Home Furniture'),
+        ('storage', 'Storage & Cabinets'),
+
+        ('office_supplies', 'Office Supplies'),
+        ('stationery', 'Stationery'),
+        ('printing', 'Printing & Scanning'),
+
+        ('computer_accessories', 'Computer Accessories'),
+        ('mobile_accessories', 'Mobile Accessories'),
+        ('audio_video', 'Audio & Video Accessories'),
+
+        ('tools', 'Tools & Equipment'),
+        ('cleaning', 'Cleaning Supplies'),
+        ('safety', 'Safety Equipment'),
+        ('others', 'Others'),
     ]
 
     category = forms.ChoiceField(

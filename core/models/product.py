@@ -7,7 +7,7 @@ class Product:
             raise ValueError("Price cannot be negative")
 
         if quantity_in_stock < 0:
-            raise InvalidQuantityException("Initial quantity must be postive")
+            raise InvalidQuantityException("Initial quantity must be positive")
 
         self.id = id
         self.name = name

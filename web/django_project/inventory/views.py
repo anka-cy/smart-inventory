@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.db.models import Q
 from django.http import Http404
 from mysql.connector import Error as MySQLError
 from django.contrib import messages
