@@ -1,10 +1,7 @@
 import os
 import sys
-from pathlib import Path
+
 def main():
-    
-
-
 
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'smart_inventory_web.settings')
