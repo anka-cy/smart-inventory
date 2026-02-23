@@ -6,17 +6,7 @@
     <div class="col-md-6">
         <h2>Customers</h2>
     </div>
-    <div class="col-md-6 d-flex justify-content-end align-items-center gap-2">
-        <!-- Search Form: Sends a GET request to the same view to filter the customer list -->
-        <form method="GET" action="{% url 'customer_list' %}" class="m-0">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ query|default:'' }}">
-                <button class="btn btn-outline-primary" type="submit">Search</button>
-                {% if query %}
-                <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary">Clear</a>
-                {% endif %}
-            </div>
-        </form>
+    <div class="col-md-6 d-flex justify-content-end align-items-center">
         <a href="{% url 'customer_create' %}" class="btn btn-primary text-nowrap">Register Customer</a>
     </div>
 </div>

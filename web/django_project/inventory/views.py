@@ -39,12 +39,8 @@ def dashboard(request):
 
 
 def product_list(request):
-    query = request.GET.get('q')
-    if query:
-        products = Product.objects.filter(name__icontains=query)
-    else:
-        products = Product.objects.all()
-    return render(request, 'inventory/product_list.html', {'products': products, 'query': query})
+    products = Product.objects.all()
+    return render(request, 'inventory/product_list.html', {'products': products})
 
 
 def product_create(request):
@@ -120,15 +116,8 @@ def product_delete(request, pk):
 
 
 def customer_list(request):
-    query = request.GET.get('q')
-    if query:
-        customers = Customer.objects.filter(
-            Q(name__icontains=query) |
-            Q(email__icontains=query)
-        )
-    else:
-        customers = Customer.objects.all()
-    return render(request, 'inventory/customer_list.html', {'customers': customers, 'query': query})
+    customers = Customer.objects.all()
+    return render(request, 'inventory/customer_list.html', {'customers': customers})
 
 
 def customer_create(request):
@@ -150,15 +139,8 @@ def customer_create(request):
 
 
 def order_list(request):
-    query = request.GET.get('q', '')
-    if query:
-        orders = Order.objects.filter(
-            Q(id__icontains=query) |
-            Q(customer__name__icontains=query)
-        ).order_by('-order_date')
-    else:
-        orders = Order.objects.all().order_by('-order_date')
-    return render(request, 'inventory/order_list.html', {'orders': orders, 'query': query})
+    orders = Order.objects.all().order_by('-order_date')
+    return render(request, 'inventory/order_list.html', {'orders': orders})
 
 
 def order_detail(request, pk):

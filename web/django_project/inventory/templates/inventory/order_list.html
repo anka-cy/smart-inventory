@@ -6,18 +6,7 @@
     <div class="col-md-6">
         <h2>Orders</h2>
     </div>
-    <div class="col-md-6 d-flex justify-content-end align-items-center gap-2">
-        <!-- Search Form: Sends a GET request to the same view to filter the order list -->
-        <form method="GET" action="{% url 'order_list' %}" class="m-0">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search by ID or Name..."
-                    value="{{ query|default:'' }}">
-                <button class="btn btn-outline-primary" type="submit">Search</button>
-                {% if query %}
-                <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">Clear</a>
-                {% endif %}
-            </div>
-        </form>
+    <div class="col-md-6 d-flex justify-content-end align-items-center">
         <a href="{% url 'order_create' %}" class="btn btn-primary">Create Order</a>
     </div>
 </div>
