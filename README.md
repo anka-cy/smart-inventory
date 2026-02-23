@@ -18,7 +18,7 @@ A Python/Django application for tracking inventory, customers, and orders.
 1. Create a virtual environment:
    ```bash
    python -m venv .venv
-   source .venv/bin/activate  # Windows: .venv\Scripts\activate
+   .venv\Scripts\activate  # Windows
    ```
 2. Install dependencies:
    ```bash
@@ -26,7 +26,7 @@ A Python/Django application for tracking inventory, customers, and orders.
    ```
 
 ### 3. Database Setup
-⚠️ IMPORTANT – Run sample.sql
+ IMPORTANT – Run schema.sql
 
 Before running the app, you MUST initialize the database schema.
 The project uses a centralized Python configuration file. Edit the variables in `database/dao/db_config.py` to match your MySQL setup:

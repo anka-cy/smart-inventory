@@ -31,9 +31,9 @@ def test():
         value = p.get_value_in_stock()
         expected_value = 89.90 * 39
         if value == expected_value:
-            print(f"  [OK] Stock value is correct: ${value}")
+            print(f"  [OK] Stock value is correct: ${value:.2f}")
         else:
-            print(f"  [Error] Stock value wrong! Expected {expected_value}, got {value}")
+            print(f"  [Error] Stock value wrong! Expected {expected_value:.2f}, got {value:.2f}")
 
     except Exception as e:
         print(f"  [Error] Product test crashed: {e}")
@@ -127,6 +127,7 @@ def test():
         print(f"  [Error] Order test crashed: {e}")
 
     print("\n--- All tests finished! ---")
+
 
 if __name__ == "__main__":
     test()
