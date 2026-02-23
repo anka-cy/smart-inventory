@@ -1,19 +1,15 @@
 {% extends 'inventory/base.html' %}
 
 {% block content %}
-<!-- Layout Wrapper: Centers the form and restricts its maximum width for better readability -->
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card card-structured mb-4">
             <div class="card-body p-4">
                 <h3 class="card-title mb-4">{{ title }}</h3>
 
-                <!-- Form Submission: Uses POST method to securely send data to the backend -->
                 <form method="post">
-                    <!-- Security Feature: Django requires a CSRF token for all POST forms to prevent cross-site request forgery -->
                     {% csrf_token %}
 
-                    <!-- Error Handling: Displays any validation errors returned by the Django form or our Core logic -->
                     {% if form.errors %}
                     <div class="alert alert-danger">
                         {% for field in form %}
@@ -27,7 +23,6 @@
                     </div>
                     {% endif %}
 
-                    <!-- Manual Field Rendering: We define each input manually to apply Bootstrap CSS classes -->
                     <div class="mb-3">
                         <label for="{{ form.name.id_for_label }}" class="form-label">Product Name:</label>
                         <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}"

@@ -1,7 +1,6 @@
 {% extends 'inventory/base.html' %}
 
 {% block content %}
-<!-- Page Layout: Header with title and primary action button -->
 <div class="row mb-3">
     <div class="col-md-6">
         <h2>Customers</h2>
@@ -11,7 +10,6 @@
     </div>
 </div>
 
-<!-- Data Table Wrapper: Uses custom card styling for a floating effect -->
 <div class="card card-structured mb-4">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -24,14 +22,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Django Template Loop: Iterates through the 'customers' list from the backend -->
                     {% for customer in customers %}
                     <tr>
                         <td>{{ customer.id }}</td>
                         <td>{{ customer.name }}</td>
                         <td>{{ customer.email }}</td>
                     </tr>
-                    <!-- Empty State: Shown if no customers exist in the database -->
                     {% empty %}
                     <tr>
                         <td colspan="3">No customers found.</td>

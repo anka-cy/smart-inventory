@@ -1,15 +1,12 @@
 {% extends 'inventory/base.html' %}
 
 {% block content %}
-<!-- Main Layout Wrapper: Uses a wide, centered column for the complex order form -->
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card card-structured mb-4">
             <div class="card-body p-4">
                 <h3 class="card-title mb-4">Create Order</h3>
-                <!-- Order Form Submission -->
                 <form method="post">
-                    <!-- Security Token: Required by Django for POST requests -->
                     {% csrf_token %}
 
                     <h4>Customer</h4>
@@ -26,7 +23,6 @@
 
                     <hr class="my-4">
                     <h4>Items</h4>
-                    <!-- Formset Management: Essential hidden fields that tell Django how many items are in the order -->
                     {{ formset.management_form }}
 
                     {% if formset.non_form_errors %}
@@ -89,7 +85,6 @@
                         {% endfor %}
                     </div>
 
-                    <!-- Dynamic UI Control: Handled by custom JavaScript below to clone the form structure -->
                     <button type="button" id="add-item" class="btn btn-sm btn-info mb-3">Add Item</button>
                     <br>
 
@@ -101,10 +96,8 @@
     </div>
 </div>
 
-<!-- Dynamic Form Validation Script -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Formset Cloning Logic: Allows users to add multiple products to a single order seamlessly
         const addItemBtn = document.getElementById('add-item');
         const container = document.getElementById('items-container');
         const totalForms = document.getElementById('id_orderitem_set-TOTAL_FORMS');

@@ -1,7 +1,6 @@
 {% extends 'inventory/base.html' %}
 
 {% block content %}
-<!-- Page Layout: Header with title and primary "Create Order" action button -->
 <div class="row mb-3">
     <div class="col-md-6">
         <h2>Orders</h2>
@@ -11,9 +10,6 @@
     </div>
 </div>
 
-</div>
-
-<!-- Data Table Wrapper: Uses custom card styling for a floating effect -->
 <div class="card card-structured mb-4">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -27,19 +23,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Django Template Loop: Iterates through the 'orders' list descending by date as defined in views.py -->
                     {% for order in orders %}
                     <tr>
                         <td>#{{ order.id }}</td>
-                        <!-- Displaying related data: Accesses the nested customer object via order.customer.name -->
                         <td>{{ order.customer.name }}</td>
-                        <!-- Date formatting: Uses Django's built in date filter to format the timestamp cleanly -->
                         <td>{{ order.order_date|date:"M d, Y g:i A" }}</td>
                         <td>
                             <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-info">View</a>
                         </td>
                     </tr>
-                    <!-- Empty State: Shown if no orders have been placed yet -->
                     {% empty %}
                     <tr>
                         <td colspan="4">No orders found.</td>

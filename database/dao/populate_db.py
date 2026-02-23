@@ -6,23 +6,22 @@ from core.models.customer import Customer
 from core.models.order import Order
 
 def populate_sample():
-    print("--- Simple Database Population ---")
 
     product_dao = ProductDAO()
     customer_dao = CustomerDAO()
     order_dao = OrderDAO()
 
-    p1 = Product(None, "Laptop", "Electronics", 1200.00, 10)
-    p2 = Product(None, "Coffee Table", "Furniture", 150.00, 5)
-    p3 = Product(None, "Pen Pack", "Office Supplies", 5.99, 100)
+    p1 = Product(None, "MacBook Air M2", "Electronics", 13499.00, 4)
+    p2 = Product(None, "Bureau en bois IKEA", "Furniture", 899.90, 3)
+    p3 = Product(None, "Ramette papier A4", "Office Supplies", 45.50, 82)
 
     print("Adding products...")
     product_dao.save(p1)
     product_dao.save(p2)
     product_dao.save(p3)
 
-    c1 = Customer(None, "John Doe", "john@email.com")
-    c2 = Customer(None, "Jane Smith", "jane@email.com")
+    c1 = Customer(None, "Aymane", "aymane.work@gmail.com")
+    c2 = Customer(None, "Salma B.", "salma.b2001@outlook.com")
 
     print("Adding customers...")
     customer_dao.save(c1)

@@ -1,41 +1,46 @@
 from core.models.product import Product
 from core.models.customer import Customer
 from core.models.order import Order
-from core.exceptions.base import  OutOfStockException, InvalidEmailException
+from core.exceptions.base import OutOfStockException, InvalidEmailException, InvalidQuantityException
 
 def test():
     print("---  core Tests ---")
 
-    print("\n[Step 1] Product Logic")
     try:
-        p = Product(101, "Wireless Mouse", "Electronics", 25.50, 50)
-        
-        if p.name != "Wireless Mouse":
+        p = Product(101, "Clavier Logitech K120", "Electronics", 89.90, 34)
+
+        if p.name != "Clavier Logitech K120":
             print("  [Error] Product name is wrong!")
-        elif p.quantity_in_stock != 50:
+        elif p.quantity_in_stock != 34:
             print("  [Error] Product stock is wrong!")
         else:
-            print("  [OK] Product 'Wireless Mouse' created successfully")
-        
+            print("  [OK] Product 'Clavier Logitech K120' created successfully")
+
         p.add_stock(10)
-        if p.quantity_in_stock == 60:
-            print("  [OK] Stock increased to 60")
+        if p.quantity_in_stock == 44:
+            print("  [OK] Stock increased to 44")
         else:
-            print(f"  [Error] Stock check failed! Expected 60, got {p.quantity_in_stock}")
-            
+            print(f"  [Error] Stock check failed! Expected 44, got {p.quantity_in_stock}")
+
         p.remove_stock(5)
-        if p.quantity_in_stock == 55:
-            print("  [OK] Stock decreased to 55")
+        if p.quantity_in_stock == 39:
+            print("  [OK] Stock decreased to 39")
         else:
-            print(f"  [Error] Stock check failed! Expected 55, got {p.quantity_in_stock}")
-            
+            print(f"  [Error] Stock check failed! Expected 39, got {p.quantity_in_stock}")
+
+        value = p.get_value_in_stock()
+        expected_value = 89.90 * 39
+        if value == expected_value:
+            print(f"  [OK] Stock value is correct: ${value}")
+        else:
+            print(f"  [Error] Stock value wrong! Expected {expected_value}, got {value}")
+
     except Exception as e:
         print(f"  [Error] Product test crashed: {e}")
 
-    print("\n[Step 2] Validation & Errors")
     try:
         try:
-            Product(999, "Error Item", "Test", -1.0, 10)
+            Product(999, "truc", "Test", -1.0, 10)
             print("  [Error] System accepted a negative price!")
         except ValueError:
             print("  [OK] Correctly blocked negative price")
@@ -45,45 +50,81 @@ def test():
             print("  [Error] System allowed removing more stock than available!")
         except OutOfStockException:
             print("  [OK] Correctly blocked over-removal of stock")
-            
+
+        try:
+            Product(800, "test produit", "Test", 10.0, -5)
+            print("  [Error] System accepted a negative initial stock!")
+        except InvalidQuantityException:
+            print("  [OK] Correctly blocked negative initial quantity")
+
+        try:
+            p.add_stock(0)
+            print("  [Error] System accepted adding zero stock!")
+        except InvalidQuantityException:
+            print("  [OK] Correctly blocked adding zero stock")
+
+        try:
+            p.remove_stock(0)
+            print("  [Error] System accepted removing zero stock!")
+        except InvalidQuantityException:
+            print("  [OK] Correctly blocked removing zero stock")
+
     except Exception as e:
         print(f"  [Error] Error check crashed: {e}")
 
-    print("\n[Step 3] Customer Logic")
     try:
-        c = Customer(1, "ahmed howari", "ahmed.m@provider.com")
-        if c.email == "ahmed.m@provider.com":
+        c = Customer(1, "Hamza", "hamza.dev99@gmail.com")
+        if c.email == "hamza.dev99@gmail.com":
             print(f"  [OK] Customer '{c.name}' created with valid email")
         else:
             print("  [Error] Customer email was not saved correctly")
-            
+
         try:
-            Customer(2, "Test User", "not_an_email")
+            Customer(2, "Sara L.", "not_an_email")
             print("  [Error] System accepted an invalid email!")
         except InvalidEmailException:
             print("  [OK] Correctly blocked malformed email")
-            
+
     except Exception as e:
         print(f"  [Error] Customer test crashed: {e}")
 
-    print("\n[Step 4] Order Calculations")
     try:
-        buyer = Customer(50, "Sara bennani", "sarabennani.j@email.com")
-        desk = Product(201, "Wooden Desk", "Furniture", 150.0, 5)
-        lamp = Product(202, "Table Lamp", "Furniture", 30.0, 20)
-        
+        buyer = Customer(50, "Mehdi", "mehdi_ait@hotmail.com")
+        desk = Product(201, "Chaise bureau IKEA", "Furniture", 449.00, 7)
+        lamp = Product(202, "Lampe LED", "Furniture", 75.50, 13)
+
         sale = Order(1001, buyer)
         sale.add_item(desk, 1)
         sale.add_item(lamp, 2)
-        
+
         grand_total = sale.calculate_total()
-        if grand_total == 210.0:
+        if grand_total == 600.0:
             print(f"  [OK] Grand total is perfect: ${grand_total}")
         else:
-            print(f"  [Error] Total mismatch! Expected 210.0, got {grand_total}")
-            
+            print(f"  [Error] Total mismatch! Expected 600.0, got {grand_total}")
+
+        empty_order = Order(1002, buyer)
+        if empty_order.calculate_total() == 0:
+            print("  [OK] Empty order total is $0")
+        else:
+            print(f"  [Error] Empty order total should be 0, got {empty_order.calculate_total()}")
+
+        try:
+            bad_order = Order(1003, buyer)
+            bad_order.add_item(desk, 0)
+            print("  [Error] System accepted zero quantity in order!")
+        except InvalidQuantityException:
+            print("  [OK] Correctly blocked zero quantity in order item")
+
+        try:
+            bad_order2 = Order(1004, buyer)
+            bad_order2.add_item(lamp, -3)
+            print("  [Error] System accepted negative quantity in order!")
+        except InvalidQuantityException:
+            print("  [OK] Correctly blocked negative quantity in order item")
+
     except Exception as e:
-        print(f"  [Critical] Order test crashed: {e}")
+        print(f"  [Error] Order test crashed: {e}")
 
     print("\n--- All tests finished! ---")
 
