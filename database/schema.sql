@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS smart_inventory_db;
+CREATE DATABASE smart_inventory_db;
 USE smart_inventory_db;
 
 CREATE TABLE IF NOT EXISTS products (

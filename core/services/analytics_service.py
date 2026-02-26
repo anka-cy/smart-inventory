@@ -31,8 +31,7 @@ def get_total_revenue():
 
         df['subtotal'] = df['quantity'] * df['price']
         return float(df['subtotal'].sum())
-    except Exception as e:
-        print(f"Error calculating revenue: {e}")
+    except:
         return 0.0
 
 
@@ -50,10 +49,13 @@ def get_best_selling_products(limit=5):
         if df.empty:
             return []
 
-        best_sellers = df.groupby('name')['quantity'].sum().sort_values(ascending=False).head(limit)
-        return best_sellers.reset_index().to_dict('records')
-    except Exception as e:
-        print(f"Error fetching best sellers: {e}")
+        grouped = df.groupby('name')['quantity'].sum().sort_values(ascending=False).head(limit)
+        
+        results = []
+        for name, qty in grouped.items():
+            results.append({'name': name, 'quantity': qty})
+        return results
+    except:
         return []
 
 
@@ -67,9 +69,9 @@ def get_stock_value():
         if df.empty:
             return 0.0
 
-        return float((df['price'] * df['quantity_in_stock']).sum())
-    except Exception as e:
-        print(f"Error fetching stock value: {e}")
+        val = (df['price'] * df['quantity_in_stock']).sum()
+        return float(val)
+    except:
         return 0.0
 
 
@@ -88,9 +90,9 @@ def get_avg_order_value():
             return 0.0
 
         df['subtotal'] = df['quantity'] * df['price']
-        return float(df.groupby('order_id')['subtotal'].sum().mean())
-    except Exception as e:
-        print(f"Error fetching avg order value: {e}")
+        avg = df.groupby('order_id')['subtotal'].sum().mean()
+        return float(avg)
+    except:
         return 0.0
 
 
@@ -113,10 +115,13 @@ def get_monthly_revenue():
         df['month'] = df['order_date'].dt.strftime('%Y-%m')
         df['subtotal'] = df['quantity'] * df['price']
 
-        monthly = df.groupby('month')['subtotal'].sum().reset_index()
-        return monthly.to_dict('records')
-    except Exception as e:
-        print(f"Error fetching monthly revenue: {e}")
+        monthly_data = df.groupby('month')['subtotal'].sum()
+        
+        final_list = []
+        for m, total in monthly_data.items():
+            final_list.append({'month': m, 'subtotal': total})
+        return final_list
+    except:
         return []
 
 
@@ -130,14 +135,13 @@ def get_customer_frequency():
         if df.empty:
             return {'average': 0.0, 'top_customers': []}
 
-        counts = df['customer_id'].value_counts()
-        avg_freq = float(counts.mean())
+        avg_freq = float(df['customer_id'].value_counts().mean())
 
 
         query_names = """
                       SELECT c.name, COUNT(o.id) as order_count
                       FROM orders o
-                               JOIN customers c ON o.customer_id = c.id
+                                JOIN customers c ON o.customer_id = c.id
                       GROUP BY c.id, c.name
                       ORDER BY order_count DESC
                       LIMIT 5 \
@@ -145,12 +149,17 @@ def get_customer_frequency():
         with engine.connect() as conn:
             df_top = pd.read_sql(query_names, conn)
 
-        top_customers = df_top.to_dict('records')
+        top_list = []
+        for i in range(len(df_top)):
+            row = df_top.iloc[i]
+            top_list.append({
+                'name': row['name'],
+                'order_count': int(row['order_count'])
+            })
 
         return {
             'average': avg_freq,
-            'top_customers': top_customers
+            'top_customers': top_list
         }
-    except Exception as e:
-        print(f"Error fetching customer frequency: {e}")
+    except:
         return {'average': 0.0, 'top_customers': []}
