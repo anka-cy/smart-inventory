@@ -15,7 +15,6 @@ from database.dao.order_dao import OrderDAO
 from core.models.customer import Customer as CoreCustomer
 from core.models.product import Product as CoreProduct
 from core.models.order import Order as CoreOrder
-from core.exceptions.base import OutOfStockException, InvalidQuantityException
 
 
 def dashboard(request):
@@ -153,7 +152,7 @@ def order_detail(request, pk):
 def order_create(request):
     OrderItemFormSet = inlineformset_factory(
         Order, OrderItem, form=OrderItemForm,
-        extra=1, can_delete=True
+        extra=0, min_num=1,can_delete=True
     )
 
     if request.method == 'POST':
@@ -161,36 +160,28 @@ def order_create(request):
         formset = OrderItemFormSet(request.POST)
 
         if form.is_valid() and formset.is_valid():
-            cust_obj = form.cleaned_data['customer']
-            core_customer = CoreCustomer(cust_obj.id, cust_obj.name, cust_obj.email)
+            try:
+                cust = form.cleaned_data['customer']
+                core_customer = CoreCustomer(cust.id, cust.name, cust.email)
+                core_order = CoreOrder(id=None, customer=core_customer)
 
-            core_order = CoreOrder(id=None, customer=core_customer)
+                for item_form in formset.forms:
+                    if not item_form.cleaned_data:
+                        continue
+                    p = item_form.cleaned_data['product']
+                    qty = item_form.cleaned_data['quantity']
+                    
+                    core_product = CoreProduct(p.id, p.name, p.category, float(p.price), p.quantity_in_stock)
+                    core_order.add_item(core_product, qty)
+                    core_product.remove_stock(qty)
 
-
-            items = formset.save(commit=False)
-            
-            if not items:
-                messages.error(request, "Please add at least one item to the order.")
-            else:
-                try:
-                    for item in items:
-                        p_obj = item.product
-                        core_product = CoreProduct(
-                            p_obj.id, p_obj.name, p_obj.category,
-                            float(p_obj.price), p_obj.quantity_in_stock
-                        )
-
-                        core_order.add_item(core_product, item.quantity)
-                        core_product.remove_stock(item.quantity)
-
+                else:
                     OrderDAO().save(core_order)
                     messages.success(request, 'Order placed successfully!')
                     return redirect('order_list')
 
-                except (OutOfStockException, InvalidQuantityException) as e:
-                    messages.error(request, str(e))
-                except Exception as e:
-                    messages.error(request, f"An error occurred: {str(e)}")
+            except Exception as e:
+                messages.error(request, str(e))
 
     else:
         form = OrderForm()

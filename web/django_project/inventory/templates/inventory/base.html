@@ -4,104 +4,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Inventory System</title>
+    <title>Smart Inventory | Modern Operations</title>
+
+    <!-- Modern Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-main: #f8fafc;
+            --sidebar-bg: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7f6;
-            color: #334155;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-main);
+            color: #1e293b;
+            overflow-x: hidden;
+            margin: 0;
+            display: flex;
         }
 
-        .navbar-premium {
-            background-color: #1e293b !important;
+        /* Sidebar Layout */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
         }
 
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand i {
+            color: var(--primary-light);
+        }
+
+        .nav-link {
+            color: #94a3b8 !important;
+            padding: 0.8rem 1rem !important;
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(79, 70, 229, 0.15);
+            color: white !important;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary) !important;
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content wrapper */
+        .main-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .top-header {
+            height: 70px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .content-area {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Modernized Components */
         .card-structured {
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            background: white;
+            transition: var(--transition);
+        }
+
+        .card-structured:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
             border: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            background-color: #ffffff;
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
         }
 
-        .btn {
-            border-radius: 6px;
-            transition: all 0.2s ease-in-out;
+        /* Flash Messages as Toasts */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
         }
 
+        .alert-toast {
+            min-width: 300px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border: none;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: var(--bg-main);
         }
 
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 4px;
+            border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Choices.js Theme Overrides */
+        .choices__inner {
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            padding: 0.35rem 0.75rem;
+            min-height: 44px;
+        }
+
+        .choices.is-focused .choices__inner {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        /* Common Utility Classes */
+        .ls-1 {
+            letter-spacing: 0.5px;
+        }
+
+        .extra-small {
+            font-size: 0.75rem;
+        }
+
+        .modern-form .form-control:focus {
+            background-color: #fff !important;
+            border: 2px solid var(--primary) !important;
+        }
+
+        .modern-form .form-control-lg {
+            outline: none;
+            box-shadow: none;
+        }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-premium mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">Smart Inventory</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'product_list' %}">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'customer_list' %}">Customers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'order_list' %}">Orders</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Collapsible Sidebar -->
+    <aside class="sidebar">
+        <a href="{% url 'dashboard' %}" class="sidebar-brand">
+            <i class="fas fa-cube"></i>
+            <span>Smart Inventory</span>
+        </a>
 
-    <div class="container">
+        <nav class="nav flex-column h-100">
+            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                href="{% url 'dashboard' %}">
+                <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a class="nav-link {% if 'product' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'product_list' %}">
+                <i class="fas fa-boxes"></i> Products
+            </a>
+            <a class="nav-link {% if 'customer' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'customer_list' %}">
+                <i class="fas fa-users"></i> Customers
+            </a>
+            <a class="nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'order_list' %}">
+                <i class="fas fa-shopping-cart"></i> Orders
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Layout -->
+    <div class="main-wrapper">
+        <main class="content-area">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Notifications Container -->
+    <div class="toast-container">
         {% if messages %}
         {% for message in messages %}
         <div
-            class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} flash-message">
-            {{ message }}
+            class="alert-toast {% if message.tags == 'error' %}bg-danger{% elif message.tags == 'success' %}bg-success{% else %}bg-primary{% endif %} flash-message initial">
+            <div class="d-flex align-items-center gap-3">
+                <i
+                    class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}"></i>
+                <div>{{ message }}</div>
+            </div>
         </div>
         {% endfor %}
         {% endif %}
-
-        <script>
-            setTimeout(function () {
-                var alerts = document.querySelectorAll('.flash-message');
-                alerts.forEach(function (alert) {
-                    alert.style.transition = 'opacity 0.5s';
-                    alert.style.opacity = '0';
-                    setTimeout(function () {
-                        alert.remove();
-                    }, 500);
-                });
-            }, 3000);
-        </script>
-
-        {% block content %}{% endblock %}
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+        function showToast(message, type = 'error') {
+            const toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) return;
+
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-success' : (type === 'info' ? 'bg-primary' : 'bg-danger');
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'info' ? 'fa-info-circle' : 'fa-exclamation-circle');
+
+            toast.className = `alert-toast ${bgColor} flash-message`;
+            toast.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fas ${icon}"></i>
+                    <div>${message}</div>
+                </div>`;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = 'all 0.4s ease-out';
+                toast.style.transform = 'translateX(120%)';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        function initChoices(select, options = {}) {
+            const defaultOptions = {
+                searchEnabled: true,
+                itemSelectText: '',
+                placeholder: true,
+                placeholderValue: 'Select an option',
+                searchPlaceholderValue: 'Type to filter...',
+                shouldSort: false,
+                searchResultLimit: 10,
+                renderChoiceLimit: -1,
+                fuseOptions: { threshold: 0.1, distance: 100 }
+            };
+            return new Choices(select, { ...defaultOptions, ...options });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('select.choices-select, .modern-form select:not(.no-choices)').forEach(el => {
+                initChoices(el);
+            });
+
+            document.querySelectorAll('.flash-message.initial').forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = 'all 0.4s ease-out';
+                    alert.style.transform = 'translateX(120%)';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 400);
+                }, 4000);
+            });
+        });
+    </script>
 </body>
 
 </html>

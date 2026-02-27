@@ -1,123 +1,119 @@
 {% extends 'inventory/base.html' %}
 
 {% block content %}
-<div class="row mb-4 g-4">
+<div class="mb-2">
+</div>
+
+<!-- Bento Grid Stats -->
+<div class="row g-4 mb-4">
     <div class="col-md-3">
-        <div class="card card-structured h-100 border-0" style="background-color: #eff6ff; color: #1e3a8a;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title fw-semibold mb-0">Products</h5>
-                    <i class="fas fa-box fa-2x opacity-50"></i>
-                </div>
-                <h2 class="display-6 fw-bold mb-0">{{ total_products }}</h2>
+        <div class="card card-structured h-100 p-4"
+            style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: none;">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="text-primary fw-bold small text-uppercase">Total Products</div>
+                <i class="fas fa-box text-primary opacity-50"></i>
             </div>
+            <h3 class="fw-bold mb-0">{{ total_products }}</h3>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-structured h-100 border-0" style="background-color: #f0fdf4; color: #166534;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title fw-semibold mb-0">Orders</h5>
-                    <i class="fas fa-shopping-cart fa-2x opacity-50"></i>
-                </div>
-                <h2 class="display-6 fw-bold mb-0">{{ total_orders }}</h2>
+        <div class="card card-structured h-100 p-4"
+            style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: none;">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="text-success fw-bold small text-uppercase">Total Orders</div>
+                <i class="fas fa-shopping-cart text-success opacity-50"></i>
             </div>
+            <h3 class="fw-bold mb-0">{{ total_orders }}</h3>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-structured h-100 border-0" style="background-color: #fdf4ff; color: #701a75;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title fw-semibold mb-0">Revenue</h5>
-                    <i class="fas fa-chart-line fa-2x opacity-50"></i>
-                </div>
-                <h2 class="display-6 fw-bold mb-0">${{ total_revenue|floatformat:0 }}</h2>
+        <div class="card card-structured h-100 p-4"
+            style="background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%); border: none;">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="text-purple fw-bold small text-uppercase" style="color: #701a75;">Revenue</div>
+                <i class="fas fa-chart-line opacity-50" style="color: #701a75;"></i>
             </div>
+            <h3 class="fw-bold mb-0">${{ total_revenue|floatformat:0 }}</h3>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card card-structured h-100 border-0" style="background-color: #fffbeb; color: #92400e;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title fw-semibold mb-0">Stock Value</h5>
-                    <i class="fas fa-dollar-sign fa-2x opacity-50"></i>
-                </div>
-                <h2 class="display-6 fw-bold mb-0">${{ stock_value|floatformat:0 }}</h2>
+        <div class="card card-structured h-100 p-4"
+            style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: none;">
+            <div class="d-flex justify-content-between mb-3">
+                <div class="text-warning fw-bold small text-uppercase" style="color: #92400e;">Products Value</div>
+                <i class="fas fa-dollar-sign opacity-50" style="color: #92400e;"></i>
             </div>
+            <h3 class="fw-bold mb-0">${{ stock_value|floatformat:0 }}</h3>
         </div>
     </div>
 </div>
 
-<!-- Charts and Stats -->
 <div class="row g-4 mb-4">
     <div class="col-lg-8">
-        <div class="card card-structured h-100">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h5 class="card-title fw-bold mb-0">Monthly Revenue Trend</h5>
+        <div class="card card-structured h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Revenue</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-light text-muted border px-3 py-2 fw-medium">Avg
+                        Value:${{avg_order_value|floatformat:2 }}</div>
+                </div>
             </div>
-            <div class="card-body">
-                <canvas id="revenueChart" style="max-height: 400px;"></canvas>
+            <div style="height: 350px;">
+                <canvas id="revenueChart"></canvas>
             </div>
         </div>
     </div>
 
+    <!-- Top Customers Bento -->
     <div class="col-lg-4">
-        <div class="card card-structured h-100">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h5 class="card-title fw-bold mb-0">Performance Insights</h5>
+        <div class="card card-structured h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Customers</h5>
+                <div class="badge bg-light text-muted border px-3 py-2 fw-medium"
+                    title="Average frequency per customer">Avg Orders: {{ customer_stats.average|floatformat:1 }}</div>
             </div>
-            <ul class="list-group list-group-flush mt-3">
-                <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-0">
-                    <div class="text-muted">Avg. Order Value</div>
-                    <span class="fw-bold fs-5">${{ avg_order_value|floatformat:2 }}</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center py-3 border-top-0">
-                    <div class="text-muted">Purchase Freq.</div>
-                    <span><strong class="fs-5">{{ customer_stats.average|floatformat:1 }}</strong> <span
-                            class="text-muted">orders/user</span></span>
-                </li>
-            </ul>
-            <div class="card-header bg-light mt-2 border-top border-bottom py-2">
-                <h6 class="mb-0 text-muted fw-semibold text-uppercase" style="font-size: 0.85rem;">Top Customers</h6>
-            </div>
-            <ul class="list-group list-group-flush">
+            <div class="list-group list-group-flush">
                 {% for cust in customer_stats.top_customers %}
-                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                    <span class="text-truncate fw-medium" style="max-width: 150px;">{{ cust.name }}</span>
-                    <span class="badge bg-primary rounded-pill px-3 py-2">{{ cust.order_count }} Orders</span>
-                </li>
+                <div class="d-flex align-items-center justify-content-between py-3 border-bottom">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                            style="width: 40px; height: 40px; color: var(--primary);">
+                            {{ cust.name|slice:":1" }}
+                        </div>
+                        <div>
+                            <div class="fw-semibold">{{ cust.name }}</div>
+                            <div class="text-muted small">{{ cust.order_count }} orders total</div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
-            </ul>
+            </div>
+            <a href="{% url 'customer_list' %}" class="btn btn-light w-100 mt-auto">View All Customers</a>
         </div>
     </div>
 </div>
 
-<!-- Best Sellers -->
-<div class="row mb-5">
-    <div class="col-md-12">
-        <div class="card card-structured">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                <h5 class="card-title fw-bold mb-0">Best Selling Products</h5>
-            </div>
-            <div class="card-body">
-                <div class="row mt-2">
-                    {% for item in best_sellers %}
-                    <div class="col-md-3 col-lg-2 text-center mb-4">
-                        <div
-                            class="p-4 border rounded bg-light h-100 d-flex flex-column justify-content-center transition-hover">
-                            <h6 class="text-truncate mb-3 fw-semibold text-dark" title="{{ item.name }}">{{ item.name }}
-                            </h6>
-                            <div>
-                                <span class="badge bg-success px-3 py-2">{{ item.quantity }} Sold</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="col-12 text-muted text-center py-4">No sales data found.</div>
-                    {% endfor %}
+<!-- Best Sellers Row -->
+<div class="card card-structured p-4">
+    <h5 class="fw-bold mb-4">Top Products</h5>
+    <div class="row g-4">
+        {% for item in best_sellers %}
+        <div class="col-md-3">
+            <div class="p-3 border-0 bg-light rounded-4 d-flex align-items-center gap-3 transition-hover shadow-sm">
+                <div class="bg-white rounded-3 d-flex align-items-center justify-content-center"
+                    style="width: 50px; height: 50px;">
+                    <i class="fas fa-tag text-primary"></i>
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                    <div class="fw-bold text-truncate" title="{{ item.name }}">{{ item.name }}</div>
+                    <div class="badge bg-success-soft text-success px-2 py-1"
+                        style="background: rgba(16, 185, 129, 0.1);">{{ item.quantity }} units sold</div>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <div class="col-12 text-center py-4 text-muted">Awaiting initial market data.</div>
+        {% endfor %}
     </div>
 </div>
 
@@ -126,15 +122,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('revenueChart').getContext('2d');
 
-        let revenueData = [];
-        try {
-            revenueData = JSON.parse(document.getElementById('revenue-data').textContent);
-        } catch (e) {
-            console.error("Could not parse revenue data");
-        }
-
+        let revenueData = JSON.parse(document.getElementById('revenue-data').textContent);
         const labels = revenueData.map(d => d.month);
         const data = revenueData.map(d => d.subtotal);
+
+        // Gradient for Area Chart
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)');
+        gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
 
         new Chart(ctx, {
             type: 'line',
@@ -143,10 +138,15 @@
                 datasets: [{
                     label: 'Revenue',
                     data: data,
-                    backgroundColor: 'rgba(13, 202, 240, 0.1)',
-                    borderColor: 'rgba(13, 202, 240, 1)',
-                    borderWidth: 2,
+                    borderColor: '#4f46e5',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4f46e5',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
                     fill: true,
+                    backgroundColor: gradient,
                     tension: 0.4
                 }]
             },
@@ -154,20 +154,22 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        cornerRadius: 8,
+                        titleFont: { family: 'Outfit', size: 14 }
                     }
                 },
                 scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    },
+                    x: { grid: { display: false }, ticks: { font: { family: 'Outfit' } } },
                     y: {
                         beginAtZero: true,
-                        grid: {
-                            color: '#f8f9fa'
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            font: { family: 'Outfit' },
+                            callback: value => '$' + value.toLocaleString()
                         }
                     }
                 }

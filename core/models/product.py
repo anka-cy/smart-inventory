@@ -17,15 +17,15 @@ class Product:
 
     def add_stock(self, qty):
         if qty <= 0:
-            raise InvalidQuantityException("Quantity to add must be positive")
+            raise InvalidQuantityException("Quantity must be greater than zero")
         self.quantity_in_stock += qty
 
     def remove_stock(self, qty):
         if qty <= 0:
-            raise InvalidQuantityException("Quantity to remove must be positive")
+            raise InvalidQuantityException("Quantity must be greater than zero")
 
         if qty > self.quantity_in_stock:
-            raise OutOfStockException(f"Not enough stock. Available: {self.quantity_in_stock}")
+            raise OutOfStockException(f"Not enough stock for {self.name} - Available: {self.quantity_in_stock}")
 
         self.quantity_in_stock -= qty
 

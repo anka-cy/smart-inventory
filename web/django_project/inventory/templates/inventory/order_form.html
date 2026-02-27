@@ -2,81 +2,107 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card card-structured mb-4">
-            <div class="card-body p-4">
-                <h3 class="card-title mb-4">Create Order</h3>
-                <form method="post">
-                    {% csrf_token %}
+    <div class="col-lg-9 col-xl-8">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Create Order</h2>
+                <p class="text-muted small mb-0">Add a new order.</p>
+            </div>
+            <a href="{% url 'order_list' %}" class="btn btn-light rounded-circle border shadow-sm"
+                style="width: 40px; height: 40px;">
+                <i class="fas fa-times"></i>
+            </a>
+        </div>
 
-                    <h4>Customer</h4>
-                    <div class="mb-3">
+        <form method="post" class="modern-order-form" novalidate>
+            {% csrf_token %}
+
+            <div class="card card-structured border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-4 ls-1">Customer</h6>
+                    <div class="mb-2">
                         {{ form.customer }}
-                        {% if form.customer.errors %}
-                        <div class="alert alert-danger mt-2 py-2">
-                            {% for error in form.customer.errors %}
-                            {{ error }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
                     </div>
+                </div>
+            </div>
 
-                    <hr class="my-4">
-                    <h4>Items</h4>
+            <div class="card card-structured border-0 shadow-sm mb-4">
+                <div
+                    class="card-header bg-white border-bottom-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-0 ls-1">Products</h6>
+                    <button type="button" id="add-item-btn"
+                        class="btn btn-sm btn-outline-primary shadow-sm rounded-pill px-3">
+                        <i class="fas fa-plus me-1"></i> Add Product
+                    </button>
+                </div>
+                <div class="card-body p-4">
                     {{ formset.management_form }}
 
-                    {% if formset.non_form_errors %}
-                    <div class="alert alert-danger">
-                        {% for error in formset.non_form_errors %}
-                        {{ error }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
 
-                    <div id="items-container">
-                        {% for form in formset %}
-                        <div class="item-row border-bottom mb-2 pb-2">
-                            {% if form.non_field_errors %}
-                            <div class="alert alert-danger py-2 mb-2">
-                                {% for error in form.non_field_errors %}
-                                {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                            <div class="row align-items-end">
-                                <div class="col-md-6 mb-2">
-                                    <label class="form-label">Product:</label>
-                                    {{ form.product }}
-                                    {% if form.product.errors %}
-                                    <div class="alert alert-danger mt-1 py-1">
-                                        {% for error in form.product.errors %}
-                                        {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
+
+                    <div id="empty-form-template" class="d-none">
+                        <div class="item-row border rounded-4 p-4 mb-3 position-relative bg-light-soft"
+                            style="background: #fbfcfe;">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-lg-6">
+                                    <label class="form-label text-muted extra-small fw-bold text-uppercase">Select
+                                        Product</label>
+                                    {{ formset.empty_form.product }}
+                                    <div class="text-danger extra-small mt-1 product-errors"></div>
                                 </div>
-                                <div class="col-md-4 mb-2">
-                                    <label class="form-label">Quantity:</label>
-                                    {{ form.quantity }}
-                                    {% if form.quantity.errors %}
-                                    <div class="alert alert-danger mt-1 py-1">
-                                        {% for error in form.quantity.errors %}
-                                        {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
+                                <div class="col-lg-4">
+                                    <label
+                                        class="form-label text-muted extra-small fw-bold text-uppercase">Quantity</label>
+                                    {{ formset.empty_form.quantity }}
+                                    <div class="text-danger extra-small mt-1 quantity-errors"></div>
                                 </div>
-                                {% if form.instance.pk %}
-                                <div class="col-md-1 mb-2">
-                                    <label class="form-label">Delete:</label>
-                                    {{ form.DELETE }}
-                                </div>
-                                {% endif %}
-                                <div class="col-md-auto mb-2">
-                                    <button type="button" class="btn btn-outline-danger remove-item" title="Remove row">
+                                <div class="col-lg-2 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-outline-danger border-0 remove-item"
+                                        title="Remove row">
                                         <i class="fas fa-trash-alt remove-item"></i>
                                     </button>
                                 </div>
+                            </div>
+                            {% for hidden in formset.empty_form.hidden_fields %}
+                            {{ hidden }}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div id="items-container">
+                        {% for form in formset %}
+                        <div class="item-row border rounded-4 p-4 mb-3 position-relative bg-light-soft"
+                            style="background: #fbfcfe;">
+
+
+                            <div class="row g-3 align-items-end">
+                                <div class="col-lg-6">
+                                    <label class="form-label text-muted extra-small fw-bold text-uppercase">Select
+                                        Product</label>
+                                    {{ form.product }}
+
+                                </div>
+                                <div class="col-lg-4">
+                                    <label
+                                        class="form-label text-muted extra-small fw-bold text-uppercase">Quantity</label>
+                                    {{ form.quantity }}
+
+                                </div>
+                                <div class="col-lg-2 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-outline-danger border-0 remove-item"
+                                        title="Remove row">
+                                        <i class="fas fa-trash-alt remove-item"></i>
+                                    </button>
+                                </div>
+                                {% if form.instance.pk %}
+                                <div class="col-12 mt-2">
+                                    <div class="form-check small">
+                                        {{ form.DELETE }}
+                                        <label class="form-check-label text-muted"
+                                            for="{{ form.DELETE.id_for_label }}">Remove this item from order</label>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                             {% for hidden in form.hidden_fields %}
                             {{ hidden }}
@@ -84,56 +110,213 @@
                         </div>
                         {% endfor %}
                     </div>
-
-                    <button type="button" id="add-item" class="btn btn-sm btn-info mb-3">Add Item</button>
-                    <br>
-
-                    <button type="submit" class="btn btn-success">Create Order</button>
-                    <a href="{% url 'order_list' %}" class="btn btn-secondary">Cancel</a>
-                </form>
+                </div>
             </div>
-        </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg flex-grow-1 shadow-sm py-3">
+                    <i class="fas fa-paper-plane me-2"></i> Save Order
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
+<style>
+    .extra-small {
+        font-size: 0.75rem;
+    }
+
+    .item-row .row {
+        align-items: flex-end !important;
+        margin-bottom: 0 !important;
+    }
+
+    .item-row .form-label {
+        margin-bottom: 8px !important;
+        display: block;
+        line-height: 1.2;
+    }
+
+    .modern-order-form .choices,
+    .modern-order-form .choices__inner,
+    .modern-order-form input:not(.choices__input) {
+        margin-bottom: 0 !important;
+        height: 48px !important;
+        min-height: 48px !important;
+    }
+
+    .modern-order-form .choices__inner,
+    .modern-order-form input:not(.choices__input) {
+        padding: 0 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        border-radius: 10px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-sizing: border-box !important;
+        background-color: white !important;
+    }
+
+    .choices__list--single {
+        padding: 0 !important;
+    }
+
+    .remove-item {
+        height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-bottom: 2px !important;
+    }
+
+    .item-row {
+        transition: all 0.2s ease;
+        border: 1px solid #edf2f7 !important;
+    }
+
+    .item-row:hover {
+        border-color: #cbd5e1 !important;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const addItemBtn = document.getElementById('add-item');
         const container = document.getElementById('items-container');
         const totalForms = document.getElementById('id_orderitem_set-TOTAL_FORMS');
+        const addBtn = document.getElementById('add-item-btn');
+        const emptyFormTemplate = document.getElementById('empty-form-template').innerHTML;
 
-        addItemBtn.addEventListener('click', function () {
-            const formCount = parseInt(totalForms.value);
-            const firstRow = container.querySelector('.item-row');
-            const newRow = firstRow.cloneNode(true);
+        const choicesInstances = new Map();
+        let masterChoices = [];
 
-            const regex = new RegExp(`orderitem_set-\\d+-`, 'g');
-            const newIndexStr = `orderitem_set-${formCount}-`;
-            newRow.innerHTML = newRow.innerHTML.replace(regex, newIndexStr);
+        const templateSelect = document.querySelector('#empty-form-template select');
+        if (templateSelect) {
+            masterChoices = Array.from(templateSelect.options)
+                .filter(opt => opt.value !== '')
+                .map(opt => ({ value: opt.value, label: opt.text }));
+        }
 
-            const inputs = newRow.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                if (input.type !== 'hidden') input.value = '';
+        function initChoices(select) {
+            if (choicesInstances.has(select)) return;
+
+            const instance = new Choices(select, {
+                searchEnabled: true,
+                itemSelectText: '',
+                placeholder: true,
+                placeholderValue: 'Select an option',
+                searchPlaceholderValue: 'Type to filter...',
+                shouldSort: false,
+                noResultsText: 'No matching items found',
+                noChoicesText: 'No more items to choose',
+                searchResultLimit: 10,
+                renderChoiceLimit: -1,
+                fuseOptions: {
+                    threshold: 0.1,
+                    distance: 100
+                }
             });
+            choicesInstances.set(select, instance);
 
-            newRow.querySelectorAll('.alert-danger').forEach(el => el.remove());
-            newRow.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            select.addEventListener('change', updateAvailableProducts);
+        }
 
-            container.appendChild(newRow);
-            totalForms.value = formCount + 1;
+        function updateAvailableProducts() {
+            const productSelects = Array.from(document.querySelectorAll('#items-container .item-row select[name$="-product"]'));
+
+            productSelects.forEach((select, index) => {
+                const instance = choicesInstances.get(select);
+                if (!instance) return;
+
+                const valuesToHide = productSelects.slice(0, index)
+                    .map(s => s.value)
+                    .filter(val => val !== '');
+
+                const currentValue = select.value;
+
+                instance.setChoices(masterChoices.map(choice => {
+                    return {
+                        ...choice,
+                        disabled: valuesToHide.includes(choice.value),
+                        selected: choice.value === currentValue
+                    };
+                }), 'value', 'label', true);
+            });
+        }
+
+        document.querySelectorAll('.modern-order-form select:not(#empty-form-template select)').forEach(initChoices);
+
+        document.querySelectorAll('#items-container input[type="number"]').forEach(input => {
+            input.required = true;
+        });
+
+        updateAvailableProducts();
+
+        addBtn.addEventListener('click', function () {
+            const index = totalForms.value;
+            let newFormHtml = emptyFormTemplate.replace(/__prefix__/g, index);
+            const newForm = document.createElement('div');
+            newForm.innerHTML = newFormHtml;
+            container.appendChild(newForm.firstElementChild);
+
+            const newRow = container.lastElementChild;
+            const select = newRow.querySelector('select');
+            const qtyInput = newRow.querySelector('input[type="number"]');
+
+            if (select) initChoices(select);
+            if (qtyInput) {
+                qtyInput.required = true;
+            }
+
+            totalForms.value = parseInt(index) + 1;
+            updateAvailableProducts();
         });
 
         container.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-item')) {
+            const removeBtn = e.target.closest('.remove-item');
+            if (removeBtn) {
+                const targetRow = removeBtn.closest('.item-row');
                 const rows = container.querySelectorAll('.item-row');
                 if (rows.length > 1) {
-                    e.target.closest('.item-row').remove();
+                    const select = targetRow.querySelector('select');
+                    if (select && choicesInstances.has(select)) {
+                        choicesInstances.get(select).destroy();
+                        choicesInstances.delete(select);
+                    }
+                    targetRow.remove();
                     totalForms.value = container.querySelectorAll('.item-row').length;
+                    updateAvailableProducts();
                 } else {
-                    alert("Order must have at least one item!");
+                    alert("Order must contain at least one product.");
                 }
             }
         });
     });
 </script>
+
+{% if form.errors or formset.errors or formset.non_form_errors %}
+{{ form.errors|json_script:"form-errors-data" }}
+{{ formset.errors|json_script:"formset-errors-data" }}
+{{ formset.non_form_errors|json_script:"formset-non-form-errors" }}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainErrors = JSON.parse(document.getElementById('form-errors-data').textContent);
+        for (const field in mainErrors) {
+            const label = field.charAt(0).toUpperCase() + field.slice(1);
+            mainErrors[field].forEach(msg => showToast(`<strong>${label}:</strong> ${msg}`));
+        }
+
+        const fsErrors = JSON.parse(document.getElementById('formset-errors-data').textContent);
+        fsErrors.forEach(errObj => {
+            for (const field in errObj) {
+                const label = field.charAt(0).toUpperCase() + field.slice(1);
+                errObj[field].forEach(msg => showToast(`<strong>${label}:</strong> ${msg}`));
+            }
+        });
+
+        const nonFormErrors = JSON.parse(document.getElementById('formset-non-form-errors').textContent);
+        nonFormErrors.forEach(msg => showToast(msg));
+    });
+</script>
+{% endif %}
+
 {% endblock %}

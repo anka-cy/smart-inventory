@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 from core.models.customer import Customer as CoreCustomer
 from core.models.product import Product as CoreProduct
-from core.exceptions.base import InvalidEmailException, OutOfStockException, InvalidQuantityException
+from core.exceptions.base import InvalidEmailException, InvalidQuantityException, OutOfStockException
 
 
 class ProductForm(forms.ModelForm):
@@ -12,32 +12,36 @@ class ProductForm(forms.ModelForm):
     CATEGORIES = [
         ('', '-- Select Category --'),
 
-        ('electronics', 'Electronics'),
-        ('computers', 'Computers & Laptops'),
-        ('mobile_devices', 'Mobile Phones & Tablets'),
-        ('networking', 'Networking Equipment'),
+        ('Electronics', 'Electronics'),
+        ('Computers & Laptops', 'Computers & Laptops'),
+        ('Mobile Phones & Tablets', 'Mobile Phones & Tablets'),
+        ('Networking Equipment', 'Networking Equipment'),
 
-        ('office_furniture', 'Office Furniture'),
-        ('home_furniture', 'Home Furniture'),
-        ('storage', 'Storage & Cabinets'),
+        ('Office Furniture', 'Office Furniture'),
+        ('Home Furniture', 'Home Furniture'),
+        ('Furniture', 'Furniture'),
+        ('Storage & Cabinets', 'Storage & Cabinets'),
 
-        ('office_supplies', 'Office Supplies'),
-        ('stationery', 'Stationery'),
-        ('printing', 'Printing & Scanning'),
+        ('Office Supplies', 'Office Supplies'),
+        ('Stationery', 'Stationery'),
+        ('Printing & Scanning', 'Printing & Scanning'),
 
-        ('computer_accessories', 'Computer Accessories'),
-        ('mobile_accessories', 'Mobile Accessories'),
-        ('audio_video', 'Audio & Video Accessories'),
+        ('Computer Accessories', 'Computer Accessories'),
+        ('Mobile Accessories', 'Mobile Accessories'),
+        ('Audio & Video Accessories', 'Audio & Video Accessories'),
 
-        ('tools', 'Tools & Equipment'),
-        ('cleaning', 'Cleaning Supplies'),
-        ('safety', 'Safety Equipment'),
-        ('others', 'Others'),
+        ('Tools & Equipment', 'Tools & Equipment'),
+        ('Cleaning Supplies', 'Cleaning Supplies'),
+        ('Safety Equipment', 'Safety Equipment'),
+        ('Others', 'Others'),
     ]
 
     category = forms.ChoiceField(
         choices=CATEGORIES,
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        error_messages={
+            'required': "Please select a category."
+        }
     )
 
     class Meta:
@@ -48,8 +52,8 @@ class ProductForm(forms.ModelForm):
         cleaned_data = super().clean()
         price = cleaned_data.get('price')
         qty = cleaned_data.get('quantity_in_stock')
-        name = cleaned_data.get('name', '')
-        category = cleaned_data.get('category', '')
+        name = cleaned_data.get('name')
+        category = cleaned_data.get('category')
 
         if price is not None and qty is not None:
             try:
@@ -79,29 +83,40 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['customer']
+        error_messages = {
+            'customer': {
+                'required': "Please select a customer."
+            }
+        }
 
 
 class OrderItemForm(forms.ModelForm):
     class Meta:
         model = OrderItem
         fields = ['product', 'quantity']
+        error_messages = {
+            'product': {
+                'required': "Please select a product."
+            }
+        }
 
-    def clean(self):
-        cleaned_data = super().clean()
-        product_obj = cleaned_data.get('product')
-        quantity = cleaned_data.get('quantity')
+    def clean_quantity(self):
+        qty = self.cleaned_data.get('quantity')
+        product = self.cleaned_data.get('product')
 
-        if product_obj and quantity:
+        if product and qty:
+            core_prod = CoreProduct(
+                id=product.id,
+                name=product.name,
+                category=product.category,
+                price=product.price,
+                quantity_in_stock=product.quantity_in_stock
+            )
             try:
-                core_p = CoreProduct(
-                    id=product_obj.id,
-                    name=product_obj.name,
-                    category=product_obj.category,
-                    price=float(product_obj.price),
-                    quantity_in_stock=product_obj.quantity_in_stock
-                )
-                core_p.remove_stock(quantity)
+                core_prod.remove_stock(qty)
             except (OutOfStockException, InvalidQuantityException) as e:
                 raise ValidationError(str(e))
+            
+        return qty
 
-        return cleaned_data
+
