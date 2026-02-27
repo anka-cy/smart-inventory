@@ -57,7 +57,7 @@ def product_create(request):
 
             ProductDAO().save(new_product)
 
-            messages.success(request, 'Product added successfully.')
+            messages.success(request, 'Product added successfully')
             return redirect('product_list')
     else:
         form = ProductForm()
@@ -83,7 +83,7 @@ def product_update(request, pk):
                 quantity_in_stock=data['quantity_in_stock']
             )
             ProductDAO().update(updated_product)
-            messages.success(request, 'Product details updated!')
+            messages.success(request, 'Product details updated')
             return redirect('product_list')
     else:
         # Pre-fill form using 'initial' data from our Core object
@@ -104,7 +104,7 @@ def product_delete(request, pk):
     if request.method == 'POST':
         try:
             ProductDAO().delete(pk)
-            messages.success(request, 'Product deleted successfully.')
+            messages.success(request, 'Product deleted successfully')
             return redirect('product_list')
         except MySQLError:
             messages.error(request, "Cannot delete this product because there's an active order.")
@@ -129,7 +129,7 @@ def customer_create(request):
                 email=data['email']
             )
             CustomerDAO().save(new_customer)
-            messages.success(request, 'New customer registered!')
+            messages.success(request, 'New customer registered')
             return redirect('customer_list')
     else:
         form = CustomerForm()
@@ -175,10 +175,10 @@ def order_create(request):
                     core_order.add_item(core_product, qty)
                     core_product.remove_stock(qty)
 
-                else:
-                    OrderDAO().save(core_order)
-                    messages.success(request, 'Order placed successfully!')
-                    return redirect('order_list')
+
+                OrderDAO().save(core_order)
+                messages.success(request, 'Order placed successfully')
+                return redirect('order_list')
 
             except Exception as e:
                 messages.error(request, str(e))
