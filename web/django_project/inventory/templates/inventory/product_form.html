@@ -40,7 +40,7 @@
                             class="form-label text-muted small fw-bold text-uppercase ls-1">Product Name</label>
                         <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}"
                             class="form-control form-control-lg border-0 bg-light rounded-3" placeholder="Product Name"
-                            value="{{ form.name.value|default_if_none:'' }}" style="outline: none; box-shadow: none;">
+                            value="{{ form.name.value|default_if_none:'' }}">
                     </div>
 
                     <div class="row mb-4">
@@ -59,8 +59,7 @@
                                 class="form-label text-muted small fw-bold text-uppercase ls-1">Price</label>
                             <input type="number" step="0.01" name="{{ form.price.name }}"
                                 id="{{ form.price.id_for_label }}" class="form-control border-0 bg-light rounded-3"
-                                placeholder="0.00" value="{{ form.price.value|default_if_none:'' }}"
-                                style="outline: none; box-shadow: none;">
+                                placeholder="0.00" value="{{ form.price.value|default_if_none:'' }}">
                         </div>
                         <div class="col-md-6">
                             <label for="{{ form.quantity_in_stock.id_for_label }}"
@@ -68,8 +67,7 @@
                             <input type="number" name="{{ form.quantity_in_stock.name }}"
                                 id="{{ form.quantity_in_stock.id_for_label }}"
                                 class="form-control border-0 bg-light rounded-3" placeholder="0"
-                                value="{{ form.quantity_in_stock.value|default_if_none:'' }}"
-                                style="outline: none; box-shadow: none;">
+                                value="{{ form.quantity_in_stock.value|default_if_none:'' }}">
                         </div>
                     </div>
 
